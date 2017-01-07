@@ -23,9 +23,10 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import java.io.InputStreamReader;
 
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
@@ -41,6 +42,8 @@ import java.awt.Font;
 
 
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class M3U2XML {
@@ -114,11 +117,15 @@ public class M3U2XML {
 
 				
 				JFileChooser chooser = new JFileChooser();
-				File f = new File("C:/");
-				
+				File f = new File(".");
 				int checker;
+				FileFilter filter = new FileNameExtensionFilter("M3U File", "m3u");
+				
+				chooser.setFileFilter(filter);
 				chooser.setCurrentDirectory(f);
+				chooser.setFileFilter(filter);
 				chooser.setDialogTitle("Open m3u file");
+				
 				checker = chooser.showOpenDialog(null);
 				
 				if (checker == JFileChooser.APPROVE_OPTION) {
@@ -130,8 +137,11 @@ public class M3U2XML {
 					//Read file
 					try {
 						
+
 						FileReader fr = new FileReader(namePath);
-						BufferedReader br = new BufferedReader(fr);
+						BufferedReader br = new BufferedReader(
+ 								new InputStreamReader(
+										new FileInputStream(namePath), "UTF-8"));
 						
 
 						while ((str = br.readLine()) != null) {
@@ -161,8 +171,10 @@ public class M3U2XML {
 						
 						for (int i = 0; i < channelArray.length; i++ ) {
 							
-
+							
 							channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
+							channelArray[i] = channelArray[i].replace("(TR) ,", "");
+							channelArray[i] = channelArray[i].replace("[ TR ] ", "");
 							
 						}
 						
@@ -193,12 +205,14 @@ public class M3U2XML {
 				
 						textArea.setText("You have imported " + namePath + "\n" +  "Please click \"Create XML File\"");
 						
+						fr.close();
+						
 					} catch (IOException e) {
 						System.out.println("File not found!");
 						e.printStackTrace();
 					}
 					
-					
+				
 				}
 				else {
 					
@@ -242,6 +256,8 @@ public class M3U2XML {
 				int size = channel.size();
 				
 				Element rootElement = xmlDoc.createElement("streamingInfos");
+				
+				
 				
 				for (int i = 0; i < size ; i++) {
 				
