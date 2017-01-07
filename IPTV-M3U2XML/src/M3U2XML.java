@@ -85,13 +85,14 @@ public class M3U2XML {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setBounds(100, 100, 429, 375);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
 
 		JTextArea textArea = new JTextArea();
-		textArea.setBounds(15, 16, 377, 195);
+		textArea.setBounds(15, 16, 393, 201);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
@@ -195,7 +196,7 @@ public class M3U2XML {
 
 			}
 		});
-		btnNewButton.setBounds(15, 249, 140, 50);
+		btnNewButton.setBounds(15, 269, 140, 50);
 		frame.getContentPane().add(btnNewButton);
 
 		JButton btnCreateXmlFile = new JButton("Create XML file");
@@ -280,7 +281,7 @@ public class M3U2XML {
 
 			}
 		});
-		btnCreateXmlFile.setBounds(252, 249, 140, 50);
+		btnCreateXmlFile.setBounds(268, 269, 140, 50);
 		frame.getContentPane().add(btnCreateXmlFile);
 
 	}
