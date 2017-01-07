@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FilenameUtils;
 import java.awt.Font;
+import java.awt.Toolkit;
 
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
@@ -87,6 +88,7 @@ public class M3U2XML {
 		frame.setBounds(100, 100, 429, 375);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
 
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(15, 16, 377, 195);
