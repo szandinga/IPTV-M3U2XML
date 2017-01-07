@@ -39,6 +39,11 @@ import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * @author dukocuk
+ *
+ */
+
 public class M3U2XML {
 
 	String str;
@@ -286,3 +291,6 @@ public class M3U2XML {
 
 	}
 }
+
+
+
