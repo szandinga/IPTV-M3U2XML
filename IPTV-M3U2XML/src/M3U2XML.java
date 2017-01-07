@@ -190,10 +190,6 @@ public class M3U2XML {
 						e.printStackTrace();
 					}
 
-				} else {
-
-					JOptionPane.showMessageDialog(null, "You have clicked cancel", "Cancel dialog box",
-							JOptionPane.WARNING_MESSAGE);
 				}
 
 			}
