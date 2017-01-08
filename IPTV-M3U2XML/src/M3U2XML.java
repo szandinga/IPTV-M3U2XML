@@ -110,7 +110,7 @@ public class M3U2XML {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				//
+				
 
 				JFileChooser chooser = new JFileChooser();
 				File f = new File(".");
