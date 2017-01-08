@@ -22,6 +22,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
@@ -292,6 +295,27 @@ public class M3U2XML {
 		frame.getContentPane().add(btnCreateXmlFile);
 
 	}
+	
+	public static boolean pingUrl(final String address) {
+		 try {
+		  final URL url = new URL("http://" + address);
+		  final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+		  urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
+		  final long startTime = System.currentTimeMillis();
+		  urlConn.connect();
+		  final long endTime = System.currentTimeMillis();
+		  if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+		   System.out.println("Time (ms) : " + (endTime - startTime));
+		   System.out.println("Ping to "+address +" was success");
+		   return true;
+		  }
+		 } catch (final MalformedURLException e1) {
+		  e1.printStackTrace();
+		 } catch (final IOException e) {
+		  e.printStackTrace();
+		 }
+		 return false;
+		}
 }
 
 
