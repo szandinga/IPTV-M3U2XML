@@ -36,7 +36,6 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FilenameUtils;
 import java.awt.Font;
-import java.awt.TextArea;
 import java.awt.Toolkit;
 
 import javax.swing.JTextArea;
@@ -165,6 +164,7 @@ public class M3U2XML {
 						}
 
 						br.close();
+						fr.close();
 
 						channelArray = channel.toArray(channelArray);
 						addressArray = address.toArray(addressArray);
