@@ -212,7 +212,8 @@ public class M3U2XML {
 
 						for (int i = 0; i < addressArraySorted.length; i++) {
 
-							addressArraySorted[i] = "plugin://plugin.video.f4mTester/?streamtype=TSDOWNLOADER&url=" + addressSorted.get(i);
+							addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArray[i] + "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
+									
 
 						}
 
