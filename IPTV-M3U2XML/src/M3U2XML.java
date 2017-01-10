@@ -36,6 +36,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FilenameUtils;
 import java.awt.Font;
+import java.awt.TextArea;
 import java.awt.Toolkit;
 
 import javax.swing.JTextArea;
@@ -56,9 +57,13 @@ public class M3U2XML {
 
 	ArrayList<String> channel = new ArrayList<String>();
 	ArrayList<String> address = new ArrayList<String>();
+	ArrayList<String> channelSorted = new ArrayList<String>();
+	ArrayList<String> addressSorted = new ArrayList<String>();
 
 	String[] channelArray = new String[channel.size()];
 	String[] addressArray = new String[address.size()];
+	String[] addressArraySorted = new String[addressSorted.size()];
+	String[] channelArraySorted = new String[channelSorted.size()];
 
 	File nameDir, namePath;
 
@@ -113,8 +118,6 @@ public class M3U2XML {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				
-
 				JFileChooser chooser = new JFileChooser();
 				File f = new File(".");
 				int checker;
@@ -161,39 +164,75 @@ public class M3U2XML {
 							counter++;
 						}
 
+						br.close();
+
 						channelArray = channel.toArray(channelArray);
 						addressArray = address.toArray(addressArray);
 
-						for (int i = 0; i < channelArray.length; i++) {
+						// Ping the URL
 
-							channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
-							channelArray[i] = channelArray[i].replace("(TR) ,", "");
-							channelArray[i] = channelArray[i].replace("[ TR ] ", "");
-
-						}
+						textArea.setText("TEST");
 
 						for (int i = 0; i < addressArray.length; i++) {
 
-							addressArray[i] = "plugin://plugin.video.f4mTester/?url=" + address.get(i)
-									+ "&amp;streamtype=TSDOWNLOADER";
+							pingUrl(channelArray[i], addressArray[i]);
+
+						}
+
+						addressArraySorted = addressSorted.toArray(addressArraySorted);
+						channelArraySorted = channelSorted.toArray(channelArraySorted);
+
+						// public static boolean pingUrl(final String address) {
+						// try {
+						// final URL url = new URL(address);
+						// final HttpURLConnection urlConn = (HttpURLConnection)
+						// url.openConnection();
+						// urlConn.setConnectTimeout(1000 * 10); // mTimeout is
+						// in seconds
+						// final long startTime = System.currentTimeMillis();
+						// urlConn.connect();
+						// final long endTime = System.currentTimeMillis();
+						// if (urlConn.getResponseCode() ==
+						// HttpURLConnection.HTTP_OK) {
+						// System.out.println("Time (ms) : " + (endTime -
+						// startTime));
+						// System.out.println("Ping to " + address + " was
+						// success");
+						// return true;
+						// }
+
+						for (int i = 0; i < channelArraySorted.length; i++) {
+
+							channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
+							channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
+							channelArraySorted[i] = channelArraySorted[i].replace("(TR) ,", "");
+							channelArraySorted[i] = channelArraySorted[i].replace("[ TR ] ", "");
+
+						}
+
+						for (int i = 0; i < addressArraySorted.length; i++) {
+
+							addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressSorted.get(i)
+							+ "&amp;streamtype=TSDOWNLOADER";
 
 						}
 
 						System.out.println(Arrays.toString(channelArray));
 						System.out.println(Arrays.toString(addressArray));
+						System.out.println(Arrays.toString(channelArraySorted));
+						System.out.println(Arrays.toString(addressArraySorted));
 
 						System.out.println(counter + " total lines");
 						System.out.println(counter_channel + " total even lines");
 						System.out.println(counter_address + " total odd lines");
 
-						System.out.println("Channel array total size " + channelArray.length);
-						System.out.println("Address array total size " + addressArray.length);
+						System.out.println("channelArray total size " + channelArray.length);
+						System.out.println("addressArray total size " + addressArray.length);
+						System.out.println("channelArraySorted array total size " + channelArraySorted.length);
+						System.out.println("addressArraySorted array total size " + addressArraySorted.length);
 
-						br.close();
-
-						textArea.setText("You have imported " + namePath + "\n" + "Please click \"Create XML File\"");
-
-						fr.close();
+						textArea.setText("You have imported and truncated non-working channels in file \n" + namePath
+								+ "\n" + "Please click \"Create XML File\"");
 
 					} catch (IOException e) {
 						System.out.println("File not found!");
@@ -232,7 +271,7 @@ public class M3U2XML {
 				// </item>
 				// </streamingInfos>
 
-				int size = channel.size();
+				int size = channelSorted.size();
 
 				Element rootElement = xmlDoc.createElement("streamingInfos");
 
@@ -242,11 +281,11 @@ public class M3U2XML {
 					// mainElement.setAttribute("sku", "123456");
 
 					Element title = xmlDoc.createElement("title");
-					Text titleText = xmlDoc.createTextNode(channelArray[i]);
+					Text titleText = xmlDoc.createTextNode(channelArraySorted[i]);
 					title.appendChild(titleText);
 
 					Element link = xmlDoc.createElement("link");
-					Text linkText = xmlDoc.createTextNode(addressArray[i]);
+					Text linkText = xmlDoc.createTextNode(addressArraySorted[i]);
 					link.appendChild(linkText);
 
 					mainElement.appendChild(title);
@@ -282,7 +321,7 @@ public class M3U2XML {
 				try {
 					serializer.serialize(xmlDoc);
 					textArea.setText("You created the file " + newFile + "!");
-					
+
 					outStream.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -295,28 +334,32 @@ public class M3U2XML {
 		frame.getContentPane().add(btnCreateXmlFile);
 
 	}
-	
-	public static boolean pingUrl(final String address) {
-		 try {
-		  final URL url = new URL("http://" + address);
-		  final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		  urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
-		  final long startTime = System.currentTimeMillis();
-		  urlConn.connect();
-		  final long endTime = System.currentTimeMillis();
-		  if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-		   System.out.println("Time (ms) : " + (endTime - startTime));
-		   System.out.println("Ping to "+address +" was success");
-		   return true;
-		  }
-		 } catch (final MalformedURLException e1) {
-		  e1.printStackTrace();
-		 } catch (final IOException e) {
-		  e.printStackTrace();
-		 }
-		 return false;
+
+	public void pingUrl(final String channel, final String address) {
+		try {
+			final URL url = new URL(address);
+			final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+			urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
+			final long startTime = System.currentTimeMillis();
+			urlConn.connect();
+			final long endTime = System.currentTimeMillis();
+			if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				System.out.println("Time (ms) : " + (endTime - startTime));
+				System.out.println("Ping to " + address + " was success");
+				channelSorted.add(channel);
+				addressSorted.add(address);
+				// return true;
+			} else {
+				System.out.println("Ping to " + address + " not success");
+				// return false;
+			}
+
+		} catch (final MalformedURLException e1) {
+			// e1.printStackTrace();
+			System.out.println("MalformedURLException");
+		} catch (final IOException e) {
+			// e.printStackTrace();
+			System.out.println("IOException");
 		}
+	}
 }
-
-
-
