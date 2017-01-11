@@ -86,8 +86,10 @@ public class M3U2XML {
 	}
 
 	/**
+	 * 
 	 * Create the application.
 	 */
+	
 	public M3U2XML() {
 		initialize();
 	}
