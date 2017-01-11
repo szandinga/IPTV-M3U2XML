@@ -54,17 +54,42 @@ public class M3U2XML {
 	int counter_channel = 0;
 	int counter_address = 0;
 
+	/*
+	 * Two ArrayList for when lines in the file are read. ArrayList channel
+	 * saves the channel names. ArrayList address saves the link addresses. Used
+	 * ArrayList to be able to expand the array. It's unknown how many lines
+	 * will be in the file.
+	 */
 	ArrayList<String> channel = new ArrayList<String>();
 	ArrayList<String> address = new ArrayList<String>();
-	ArrayList<String> channelSorted = new ArrayList<String>();
-	ArrayList<String> addressSorted = new ArrayList<String>();
+
+	// Creates two Arrays which is the size of ArrayList channel and ArrayList
+	// address.
 
 	String[] channelArray = new String[channel.size()];
 	String[] addressArray = new String[address.size()];
+
+	/*
+	 * Two ArrayList to sort only the working channels. ArrayList channelSorted
+	 * saves the working channel names. ArrayList addressSorted saves the
+	 * working link addresses. Used ArrayList to be able to expand the array.
+	 * It's unknown how many lines there will be left after channels are sorted.
+	 */
+	ArrayList<String> channelSorted = new ArrayList<String>();
+	ArrayList<String> addressSorted = new ArrayList<String>();
+
+	// Creates two Arrays which is the size of ArrayList channelSorted and
+	// ArrayList addressSorted.
+
 	String[] addressArraySorted = new String[addressSorted.size()];
 	String[] channelArraySorted = new String[channelSorted.size()];
-
-	File nameDir, namePath;
+	
+	// File currentDir and namePath for the importing file part. CurrentDir shows the current directory when clicking open m3u file.
+	File namePath, currentDir;
+	
+	// Filefilter for telling only to open certain filetypes. 
+	FileFilter filter;
+	
 
 	private JFrame frame;
 
@@ -88,7 +113,7 @@ public class M3U2XML {
 	/**
 	 * Create the application.
 	 */
-	
+
 	public M3U2XML() {
 		initialize();
 	}
@@ -119,24 +144,20 @@ public class M3U2XML {
 			public void actionPerformed(ActionEvent arg0) {
 
 				JFileChooser chooser = new JFileChooser();
-				File f = new File(".");
-				int checker;
-				FileFilter filter = new FileNameExtensionFilter("M3U File", "m3u");
+				currentDir = new File(".");
+				
+				filter = new FileNameExtensionFilter("M3U File", "m3u");
 
 				chooser.setFileFilter(filter);
-				chooser.setCurrentDirectory(f);
+				chooser.setCurrentDirectory(currentDir);
 				chooser.setFileFilter(filter);
 				chooser.setDialogTitle("Open m3u file");
-
+				
+				int checker;
 				checker = chooser.showOpenDialog(null);
 
 				if (checker == JFileChooser.APPROVE_OPTION) {
-					// nameDir = chooser.getCurrentDirectory();
 					namePath = chooser.getSelectedFile();
-					// System.out.println("The name of directory: " +
-					// nameDir.getName());
-					// System.out.println("The name of path: " +
-					// namePath.getAbsolutePath());
 
 					// Read file
 					try {
