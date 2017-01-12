@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,9 +56,13 @@ public class M3U2XML {
 	// Used to keep track of how many lines there are on the file being read.
 	int counter = 0;
 
-	// To keep track of how many channels were imported to ArrayList channel and address
+	// To keep track of how many channels were imported to ArrayList channel and
+	// address
 	int counter_channel = 0;
 	int counter_address = 0;
+
+	// To keep track og how many success and fails on pinging the urls.
+	int ping_success = 0, ping_fail = 0;
 
 	/*
 	 * Two ArrayList for when lines in the file are read. ArrayList channel
@@ -97,6 +102,8 @@ public class M3U2XML {
 	FileFilter filter;
 
 	private JFrame frame;
+
+	JRadioButton rdbtnAllChannels, rdbtnTurkishChannels;
 
 	/**
 	 * Launch the application.
@@ -147,9 +154,14 @@ public class M3U2XML {
 
 		// creates the button for opening the file
 		JButton btnOpen = new JButton("Open m3u file");
+
+		/**
+		 * Opens and import the file when button clicked.
+		 */
+
 		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				// creates a chooser so you can chose the file yourself.
 				JFileChooser chooser = new JFileChooser();
 				// shows the current directory when you want to choice the file.
@@ -163,15 +175,17 @@ public class M3U2XML {
 				// sets the title for open window.
 				chooser.setDialogTitle("Open m3u file");
 
+				// checks if any file is selected
 				int checker;
 				checker = chooser.showOpenDialog(null);
 
 				if (checker == JFileChooser.APPROVE_OPTION) {
 					namePath = chooser.getSelectedFile();
 
-					// Read file
+					// Reads the file
 					try {
 
+						//
 						FileReader fr = new FileReader(namePath);
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(new FileInputStream(namePath), "UTF-8"));
@@ -201,37 +215,77 @@ public class M3U2XML {
 						channelArray = channel.toArray(channelArray);
 						addressArray = address.toArray(addressArray);
 
-						// Ping the URL
+						// Start pinging the URL's
 
+						if (rdbtnAllChannels.isSelected()) {
+
+							for (int i = 0; i < addressArray.length; i++) {
+
+								pingUrl(channelArray[i], addressArray[i]);
+
+							}
+
+							channelArraySorted = channelSorted.toArray(channelArraySorted);
+							addressArraySorted = addressSorted.toArray(addressArraySorted);
+
+							for (int i = 0; i < channelArraySorted.length; i++) {
+
+								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
+								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
+
+							}
+
+							for (int i = 0; i < addressArraySorted.length; i++) {
+
+								addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArraySorted[i]
+										+ "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
+
+							}
+							
+						} 
 						
+						// Turkish lost
+						
+						else if (rdbtnTurkishChannels.isSelected()) {
+							
+							for (int i = 0; i < addressArray.length; i++) {
+								
+								if (addressArray[i].contains("tr")) {
+									
+								}
 
-						for (int i = 0; i < addressArray.length; i++) {
+							}
 
-							pingUrl(channelArray[i], addressArray[i]);
+							
+							
+							
+							for (int i = 0; i < addressArray.length; i++) {
+
+								pingUrl(channelArray[i], addressArray[i]);
+
+							}
+
+							addressArraySorted = addressSorted.toArray(addressArraySorted);
+							channelArraySorted = channelSorted.toArray(channelArraySorted);
+
+							for (int i = 0; i < channelArraySorted.length; i++) {
+
+								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
+								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
+								channelArraySorted[i] = channelArraySorted[i].replace("(TR) ,", "");
+								channelArraySorted[i] = channelArraySorted[i].replace("[ TR ] ", "");
+								channelArraySorted[i] = channelArraySorted[i].replace("TR: ", "");
+
+							}
+
+							for (int i = 0; i < addressArraySorted.length; i++) {
+
+								addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArraySorted[i]
+										+ "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
+
+							}
 
 						}
-
-						addressArraySorted = addressSorted.toArray(addressArraySorted);
-						channelArraySorted = channelSorted.toArray(channelArraySorted);
-						
-						// public static boolean pingUrl(final String address) {
-						// try {
-						// final URL url = new URL(address);
-						// final HttpURLConnection urlConn = (HttpURLConnection)
-						// url.openConnection();
-						// urlConn.setConnectTimeout(1000 * 10); // mTimeout is
-						// in seconds
-						// final long startTime = System.currentTimeMillis();
-						// urlConn.connect();
-						// final long endTime = System.currentTimeMillis();
-						// if (urlConn.getResponseCode() ==
-						// HttpURLConnection.HTTP_OK) {
-						// System.out.println("Time (ms) : " + (endTime -
-						// startTime));
-						// System.out.println("Ping to " + address + " was
-						// success");
-						// return true;
-						// }
 
 						for (int i = 0; i < channelArraySorted.length; i++) {
 
@@ -279,12 +333,11 @@ public class M3U2XML {
 		frame.getContentPane().add(btnOpen);
 
 		JButton btnCreate = new JButton("Create XML file");
-		
-		
+
 		/**
-		 *  Create the XML file when button clicked.
+		 * Create the XML file when button clicked.
 		 */
-		
+
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -370,26 +423,23 @@ public class M3U2XML {
 		});
 		btnCreate.setBounds(268, 269, 140, 50);
 		frame.getContentPane().add(btnCreate);
-		
+
 		/**
-		 *  Creating the radio button.
-		 *  
+		 * Creating the radio button.
+		 * 
 		 */
-		JRadioButton rdbtnAllChannels = new JRadioButton("All channels", true);
-		JRadioButton rdbtnTurkishChannels = new JRadioButton("Turkish Channels Only");
-		
+		rdbtnAllChannels = new JRadioButton("All channels", true);
+		rdbtnTurkishChannels = new JRadioButton("Turkish Channels Only");
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnAllChannels);
 		group.add(rdbtnTurkishChannels);
-		
+
 		frame.getContentPane().add(rdbtnAllChannels);
 		frame.getContentPane().add(rdbtnTurkishChannels);
-		
+
 		rdbtnAllChannels.setBounds(25, 229, 109, 23);
 		rdbtnTurkishChannels.setBounds(146, 229, 195, 23);
-		
-		
-		
 
 	}
 
@@ -406,9 +456,12 @@ public class M3U2XML {
 				System.out.println("Ping to " + address + " was success");
 				channelSorted.add(channel);
 				addressSorted.add(address);
+				ping_success++;
 				// return true;
 			} else {
+				System.out.println("Time (ms) : " + (endTime - startTime));
 				System.out.println("Ping to " + address + " not success");
+				ping_fail++;
 				// return false;
 			}
 
