@@ -1,7 +1,7 @@
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,6 +41,7 @@ import java.awt.Toolkit;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JRadioButton;
 
 /**
  * @author dukocuk
@@ -49,8 +50,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class M3U2XML {
 
+	// Used for filereader.readline().
 	String str;
+	// Used to keep track of how many lines there are on the file being read.
 	int counter = 0;
+
+	// To keep track of how many channels were imported to ArrayList channel and address
 	int counter_channel = 0;
 	int counter_address = 0;
 
@@ -83,13 +88,13 @@ public class M3U2XML {
 
 	String[] addressArraySorted = new String[addressSorted.size()];
 	String[] channelArraySorted = new String[channelSorted.size()];
-	
-	// File currentDir and namePath for the importing file part. CurrentDir shows the current directory when clicking open m3u file.
+
+	// File currentDir and namePath for the importing file part. CurrentDir
+	// shows the current directory when clicking open m3u file.
 	File namePath, currentDir;
-	
-	// Filefilter for telling only to open certain filetypes. 
+
+	// Filefilter for telling only to open certain filetypes.
 	FileFilter filter;
-	
 
 	private JFrame frame;
 
@@ -127,8 +132,9 @@ public class M3U2XML {
 		frame.setBounds(100, 100, 429, 375);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		// sets the icon on the fram. Works for windows but not mac.
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
-
+		// Creates a text area on the window.
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(15, 16, 393, 201);
 		textArea.setWrapStyleWord(true);
@@ -139,20 +145,24 @@ public class M3U2XML {
 		textArea.setFont(font.deriveFont(size));
 		frame.getContentPane().add(textArea);
 
-		JButton btnNewButton = new JButton("Open m3u file");
-		btnNewButton.addActionListener(new ActionListener() {
+		// creates the button for opening the file
+		JButton btnOpen = new JButton("Open m3u file");
+		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
+				
+				// creates a chooser so you can chose the file yourself.
 				JFileChooser chooser = new JFileChooser();
+				// shows the current directory when you want to choice the file.
 				currentDir = new File(".");
-				
+				// sets a filter to only show m3u files when you open files.
 				filter = new FileNameExtensionFilter("M3U File", "m3u");
-
+				// activates the filter for chooser.
 				chooser.setFileFilter(filter);
+				// activates the current directory.
 				chooser.setCurrentDirectory(currentDir);
-				chooser.setFileFilter(filter);
+				// sets the title for open window.
 				chooser.setDialogTitle("Open m3u file");
-				
+
 				int checker;
 				checker = chooser.showOpenDialog(null);
 
@@ -193,7 +203,7 @@ public class M3U2XML {
 
 						// Ping the URL
 
-						textArea.setText("TEST");
+						
 
 						for (int i = 0; i < addressArray.length; i++) {
 
@@ -265,11 +275,17 @@ public class M3U2XML {
 
 			}
 		});
-		btnNewButton.setBounds(15, 269, 140, 50);
-		frame.getContentPane().add(btnNewButton);
+		btnOpen.setBounds(15, 269, 140, 50);
+		frame.getContentPane().add(btnOpen);
 
-		JButton btnCreateXmlFile = new JButton("Create XML file");
-		btnCreateXmlFile.addActionListener(new ActionListener() {
+		JButton btnCreate = new JButton("Create XML file");
+		
+		
+		/**
+		 *  Create the XML file when button clicked.
+		 */
+		
+		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
 				// DocumentBuilderFactory
@@ -352,8 +368,28 @@ public class M3U2XML {
 
 			}
 		});
-		btnCreateXmlFile.setBounds(268, 269, 140, 50);
-		frame.getContentPane().add(btnCreateXmlFile);
+		btnCreate.setBounds(268, 269, 140, 50);
+		frame.getContentPane().add(btnCreate);
+		
+		/**
+		 *  Creating the radio button.
+		 *  
+		 */
+		JRadioButton rdbtnAllChannels = new JRadioButton("All channels", true);
+		JRadioButton rdbtnTurkishChannels = new JRadioButton("Turkish Channels Only");
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnAllChannels);
+		group.add(rdbtnTurkishChannels);
+		
+		frame.getContentPane().add(rdbtnAllChannels);
+		frame.getContentPane().add(rdbtnTurkishChannels);
+		
+		rdbtnAllChannels.setBounds(25, 229, 109, 23);
+		rdbtnTurkishChannels.setBounds(146, 229, 195, 23);
+		
+		
+		
 
 	}
 
