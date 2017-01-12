@@ -213,7 +213,6 @@ public class M3U2XML {
 
 						addressArraySorted = addressSorted.toArray(addressArraySorted);
 						channelArraySorted = channelSorted.toArray(channelArraySorted);
-						
 						// public static boolean pingUrl(final String address) {
 						// try {
 						// final URL url = new URL(address);
