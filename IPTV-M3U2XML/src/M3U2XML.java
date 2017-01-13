@@ -46,6 +46,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
@@ -155,14 +156,15 @@ public class M3U2XML {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 493, 442);
+		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		// sets the icon on the fram. Works for windows but not mac.
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
+		
 		// Creates a text area on the window.
 		textArea = new JTextArea();
-		textArea.setBounds(15, 16, 457, 201);
+		textArea.setBounds(6, 33, 471, 248);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
@@ -170,11 +172,12 @@ public class M3U2XML {
 		Font font = textArea.getFont();
 		float size = font.getSize() + 5.0f;
 		textArea.setFont(font.deriveFont(size));
-		JScrollPane scroll = new JScrollPane(textArea);
 		
-		frame.getContentPane().add(scroll);
+		
 		frame.getContentPane().add(textArea);
-
+		JScrollPane scroll = new JScrollPane(textArea);
+		scroll.setBounds(6, 4, 480, 250);
+		frame.getContentPane().add(scroll);
 		// creates the button for opening the file
 		JButton btnOpen = new JButton("Open m3u file");
 		btnOpen.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -361,7 +364,7 @@ public class M3U2XML {
 
 			}
 		});
-		btnOpen.setBounds(15, 355, 151, 31);
+		btnOpen.setBounds(21, 413, 151, 31);
 		frame.getContentPane().add(btnOpen);
 
 		JButton btnCreate = new JButton("Create XML file");
@@ -454,7 +457,7 @@ public class M3U2XML {
 
 			}
 		});
-		btnCreate.setBounds(306, 355, 166, 31);
+		btnCreate.setBounds(312, 413, 166, 31);
 		frame.getContentPane().add(btnCreate);
 
 		/**
@@ -462,9 +465,9 @@ public class M3U2XML {
 		 * 
 		 */
 		rdbtnAllChannels = new JRadioButton("All channels", true);
-		rdbtnAllChannels.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		rdbtnAllChannels.setFont(new Font("Calibri", Font.BOLD, 18));
 		rdbtnTurkishChannels = new JRadioButton("Turkish Channels Only");
-		rdbtnTurkishChannels.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		rdbtnTurkishChannels.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnAllChannels);
@@ -473,12 +476,12 @@ public class M3U2XML {
 		frame.getContentPane().add(rdbtnAllChannels);
 		frame.getContentPane().add(rdbtnTurkishChannels);
 
-		rdbtnAllChannels.setBounds(15, 265, 125, 31);
-		rdbtnTurkishChannels.setBounds(15, 293, 209, 31);
+		rdbtnAllChannels.setBounds(0, 312, 125, 31);
+		rdbtnTurkishChannels.setBounds(0, 340, 209, 31);
 		
 		JLabel lblImport = new JLabel("Import");
 		lblImport.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblImport.setBounds(25, 233, 60, 25);
+		lblImport.setBounds(10, 280, 60, 25);
 		frame.getContentPane().add(lblImport);
 		
 		
