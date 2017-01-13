@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -40,9 +41,15 @@ import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JRadioButton;
+import javax.swing.JLabel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+
+import java.awt.ScrollPane;
 
 /**
  * @author dukocuk
@@ -70,14 +77,14 @@ public class M3U2XML {
 	 * ArrayList to be able to expand the array. It's unknown how many lines
 	 * will be in the file.
 	 */
-	ArrayList<String> channel = new ArrayList<String>();
-	ArrayList<String> address = new ArrayList<String>();
+	ArrayList<String> channelArrayList = new ArrayList<String>();
+	ArrayList<String> addressArrayList = new ArrayList<String>();
 
 	// Creates two Arrays which is the size of ArrayList channel and ArrayList
 	// address.
 
-	String[] channelArray = new String[channel.size()];
-	String[] addressArray = new String[address.size()];
+	String[] channelArray = new String[channelArrayList.size()];
+	String[] addressArray = new String[addressArrayList.size()];
 
 	/*
 	 * Two ArrayList to sort only the working channels. ArrayList channelSorted
@@ -85,14 +92,25 @@ public class M3U2XML {
 	 * working link addresses. Used ArrayList to be able to expand the array.
 	 * It's unknown how many lines there will be left after channels are sorted.
 	 */
-	ArrayList<String> channelSorted = new ArrayList<String>();
-	ArrayList<String> addressSorted = new ArrayList<String>();
+	ArrayList<String> channelSortedArrayList = new ArrayList<String>();
+	ArrayList<String> addressSortedArrayList = new ArrayList<String>();
 
 	// Creates two Arrays which is the size of ArrayList channelSorted and
 	// ArrayList addressSorted.
 
-	String[] addressArraySorted = new String[addressSorted.size()];
-	String[] channelArraySorted = new String[channelSorted.size()];
+	String[] addressSortedArray = new String[addressSortedArrayList.size()];
+	String[] channelSortedArray = new String[channelSortedArrayList.size()];
+
+	// Creates two ArrayList for the Turkish Channels
+
+	ArrayList<String> channelTurkishArrayList = new ArrayList<String>();
+	ArrayList<String> addressTurkishArrayList = new ArrayList<String>();
+
+	// Creates two Arrays which is the size of ArrayList channelTurkishArrayList
+	// and addressTurkishArrayList
+
+	String[] addressTurkishArray = new String[addressTurkishArrayList.size()];
+	String[] channelTurkishArray = new String[channelTurkishArrayList.size()];
 
 	// File currentDir and namePath for the importing file part. CurrentDir
 	// shows the current directory when clicking open m3u file.
@@ -103,6 +121,7 @@ public class M3U2XML {
 
 	private JFrame frame;
 
+	JTextArea textArea;
 	JRadioButton rdbtnAllChannels, rdbtnTurkishChannels;
 
 	/**
@@ -136,24 +155,29 @@ public class M3U2XML {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 429, 375);
+		frame.setBounds(100, 100, 493, 442);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		// sets the icon on the fram. Works for windows but not mac.
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
 		// Creates a text area on the window.
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(15, 16, 393, 201);
+		textArea = new JTextArea();
+		textArea.setBounds(15, 16, 457, 201);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
+		textArea.setVisible(true);
 		Font font = textArea.getFont();
 		float size = font.getSize() + 5.0f;
 		textArea.setFont(font.deriveFont(size));
+		JScrollPane scroll = new JScrollPane(textArea);
+		
+		frame.getContentPane().add(scroll);
 		frame.getContentPane().add(textArea);
 
 		// creates the button for opening the file
 		JButton btnOpen = new JButton("Open m3u file");
+		btnOpen.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
 		/**
 		 * Opens and import the file when button clicked.
@@ -181,11 +205,14 @@ public class M3U2XML {
 
 				if (checker == JFileChooser.APPROVE_OPTION) {
 					namePath = chooser.getSelectedFile();
+					
+					
 
 					// Reads the file
 					try {
 
-						//
+						
+						
 						FileReader fr = new FileReader(namePath);
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(new FileInputStream(namePath), "UTF-8"));
@@ -198,12 +225,12 @@ public class M3U2XML {
 
 							else if (counter % 2 == 0) {
 
-								channel.add(str);
+								channelArrayList.add(str);
 
 								counter_channel++;
 							} else {
 
-								address.add(str);
+								addressArrayList.add(str);
 								counter_address++;
 							}
 							counter++;
@@ -212,12 +239,19 @@ public class M3U2XML {
 						br.close();
 						fr.close();
 
-						channelArray = channel.toArray(channelArray);
-						addressArray = address.toArray(addressArray);
+						channelArray = channelArrayList.toArray(channelArray);
+						addressArray = addressArrayList.toArray(addressArray);
+						
+						
+						
+						
+						
 
-						// Start pinging the URL's
+						// All list
 
 						if (rdbtnAllChannels.isSelected()) {
+							
+							
 
 							for (int i = 0; i < addressArray.length; i++) {
 
@@ -225,88 +259,80 @@ public class M3U2XML {
 
 							}
 
-							channelArraySorted = channelSorted.toArray(channelArraySorted);
-							addressArraySorted = addressSorted.toArray(addressArraySorted);
+							channelSortedArray = channelSortedArrayList.toArray(channelSortedArray);
+							addressSortedArray = addressSortedArrayList.toArray(addressSortedArray);
 
-							for (int i = 0; i < channelArraySorted.length; i++) {
+							for (int i = 0; i < channelSortedArray.length; i++) {
 
-								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
-								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
+
+							}
+
+							for (int i = 0; i < addressSortedArray.length; i++) {
+
+								addressSortedArray[i] = "plugin://plugin.video.f4mTester/?url=" + addressSortedArray[i]
+										+ "&streamtype=TSDOWNLOADER&name=" + channelSortedArray[i];
 
 							}
 
-							for (int i = 0; i < addressArraySorted.length; i++) {
+						}
 
-								addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArraySorted[i]
-										+ "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
+						// Turkish list
 
-							}
-							
-						} 
-						
-						// Turkish lost
-						
 						else if (rdbtnTurkishChannels.isSelected()) {
-							
-							for (int i = 0; i < addressArray.length; i++) {
-								
-								if (addressArray[i].contains("tr")) {
-									
+
+							for (int i = 0; i < channelArray.length; i++) {
+
+								if (channelArray[i].toLowerCase().contains("tr")) {
+
+									channelTurkishArrayList.add(channelArray[i]);
+									addressTurkishArrayList.add(addressArray[i]);
+
 								}
 
 							}
+							
+							channelTurkishArray = channelTurkishArrayList.toArray(channelTurkishArray);
+							addressTurkishArray = addressTurkishArrayList.toArray(addressTurkishArray);
 
-							
-							
-							
-							for (int i = 0; i < addressArray.length; i++) {
+							for (int i = 0; i < channelTurkishArray.length; i++) {
 
-								pingUrl(channelArray[i], addressArray[i]);
+								pingUrl(channelTurkishArray[i], addressTurkishArray[i]);
 
 							}
 
-							addressArraySorted = addressSorted.toArray(addressArraySorted);
-							channelArraySorted = channelSorted.toArray(channelArraySorted);
+							channelSortedArray = channelSortedArrayList.toArray(channelSortedArray);
+							addressSortedArray = addressSortedArrayList.toArray(addressSortedArray);
+							
 
-							for (int i = 0; i < channelArraySorted.length; i++) {
+							for (int i = 0; i < channelSortedArray.length; i++) {
 
-								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
-								channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
-								channelArraySorted[i] = channelArraySorted[i].replace("(TR) ,", "");
-								channelArraySorted[i] = channelArraySorted[i].replace("[ TR ] ", "");
-								channelArraySorted[i] = channelArraySorted[i].replace("TR: ", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("(TR) ,", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("[ TR ] ", "");
+								channelSortedArray[i] = channelSortedArray[i].replace("TR: ", "");
 
 							}
 
-							for (int i = 0; i < addressArraySorted.length; i++) {
+							for (int i = 0; i < addressSortedArray.length; i++) {
 
-								addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArraySorted[i]
-										+ "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
+								addressSortedArray[i] = "plugin://plugin.video.f4mTester/?url=" + addressSortedArray[i]
+										+ "&streamtype=TSDOWNLOADER&name=" + channelSortedArray[i];
 
 							}
 
 						}
-
-						for (int i = 0; i < channelArraySorted.length; i++) {
-
-							channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:-1,", "");
-							channelArraySorted[i] = channelArraySorted[i].replace("#EXTINF:0,", "");
-							channelArraySorted[i] = channelArraySorted[i].replace("(TR) ,", "");
-							channelArraySorted[i] = channelArraySorted[i].replace("[ TR ] ", "");
-
-						}
-
-						for (int i = 0; i < addressArraySorted.length; i++) {
-
-							addressArraySorted[i] = "plugin://plugin.video.f4mTester/?url=" + addressArraySorted[i]
-									+ "&streamtype=TSDOWNLOADER&name=" + channelArraySorted[i];
-
-						}
+						
+						/*
+						 * This part helps me to figure how it all went out.
+						 */
 
 						System.out.println(Arrays.toString(channelArray));
 						System.out.println(Arrays.toString(addressArray));
-						System.out.println(Arrays.toString(channelArraySorted));
-						System.out.println(Arrays.toString(addressArraySorted));
+						System.out.println(Arrays.toString(channelSortedArray));
+						System.out.println(Arrays.toString(addressSortedArray));
 
 						System.out.println(counter + " total lines");
 						System.out.println(counter_channel + " total even lines");
@@ -314,10 +340,16 @@ public class M3U2XML {
 
 						System.out.println("channelArray total size " + channelArray.length);
 						System.out.println("addressArray total size " + addressArray.length);
-						System.out.println("channelArraySorted array total size " + channelArraySorted.length);
-						System.out.println("addressArraySorted array total size " + addressArraySorted.length);
+						System.out.println("channelTurkishArray array total size " + channelTurkishArray.length);
+						System.out.println("addressTurkishArray array total size " + addressTurkishArray.length);
+						System.out.println("ping_success total size " + ping_success);
+						System.out.println("ping_fail total size " + ping_fail);
+						System.out.println("channelArraySorted array total size " + channelSortedArray.length);
+						System.out.println("addressArraySorted array total size " + addressSortedArray.length);
 
-						textArea.setText("You have imported and truncated non-working channels in file \n" + namePath
+						
+
+						textArea.append("You have imported and truncated non-working channels in file \n" + namePath
 								+ "\n" + "Please click \"Create XML File\"");
 
 					} catch (IOException e) {
@@ -329,10 +361,11 @@ public class M3U2XML {
 
 			}
 		});
-		btnOpen.setBounds(15, 269, 140, 50);
+		btnOpen.setBounds(15, 355, 151, 31);
 		frame.getContentPane().add(btnOpen);
 
 		JButton btnCreate = new JButton("Create XML file");
+		btnCreate.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
 		/**
 		 * Create the XML file when button clicked.
@@ -362,7 +395,7 @@ public class M3U2XML {
 				// </item>
 				// </streamingInfos>
 
-				int size = channelSorted.size();
+				int size = channelSortedArray.length;
 
 				Element rootElement = xmlDoc.createElement("streamingInfos");
 
@@ -372,11 +405,11 @@ public class M3U2XML {
 					// mainElement.setAttribute("sku", "123456");
 
 					Element title = xmlDoc.createElement("title");
-					Text titleText = xmlDoc.createTextNode(channelArraySorted[i]);
+					Text titleText = xmlDoc.createTextNode(channelSortedArray[i]);
 					title.appendChild(titleText);
 
 					Element link = xmlDoc.createElement("link");
-					Text linkText = xmlDoc.createTextNode(addressArraySorted[i]);
+					Text linkText = xmlDoc.createTextNode(addressSortedArray[i]);
 					link.appendChild(linkText);
 
 					mainElement.appendChild(title);
@@ -411,7 +444,7 @@ public class M3U2XML {
 				// the specific OutputFormat
 				try {
 					serializer.serialize(xmlDoc);
-					textArea.setText("You created the file " + newFile + "!");
+					textArea.append("You created the file " + newFile + "!");
 
 					outStream.close();
 				} catch (IOException e) {
@@ -421,7 +454,7 @@ public class M3U2XML {
 
 			}
 		});
-		btnCreate.setBounds(268, 269, 140, 50);
+		btnCreate.setBounds(306, 355, 166, 31);
 		frame.getContentPane().add(btnCreate);
 
 		/**
@@ -429,7 +462,9 @@ public class M3U2XML {
 		 * 
 		 */
 		rdbtnAllChannels = new JRadioButton("All channels", true);
+		rdbtnAllChannels.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		rdbtnTurkishChannels = new JRadioButton("Turkish Channels Only");
+		rdbtnTurkishChannels.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnAllChannels);
@@ -438,8 +473,17 @@ public class M3U2XML {
 		frame.getContentPane().add(rdbtnAllChannels);
 		frame.getContentPane().add(rdbtnTurkishChannels);
 
-		rdbtnAllChannels.setBounds(25, 229, 109, 23);
-		rdbtnTurkishChannels.setBounds(146, 229, 195, 23);
+		rdbtnAllChannels.setBounds(15, 265, 125, 31);
+		rdbtnTurkishChannels.setBounds(15, 293, 209, 31);
+		
+		JLabel lblImport = new JLabel("Import");
+		lblImport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblImport.setBounds(25, 233, 60, 25);
+		frame.getContentPane().add(lblImport);
+		
+		
+		
+		
 
 	}
 
@@ -454,8 +498,10 @@ public class M3U2XML {
 			if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				System.out.println("Time (ms) : " + (endTime - startTime));
 				System.out.println("Ping to " + address + " was success");
-				channelSorted.add(channel);
-				addressSorted.add(address);
+				textArea.append(channel);
+				textArea.append(address);
+				channelSortedArrayList.add(channel);
+				addressSortedArrayList.add(address);
 				ping_success++;
 				// return true;
 			} else {
