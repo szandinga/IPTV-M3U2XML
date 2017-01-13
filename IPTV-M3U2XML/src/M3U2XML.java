@@ -41,16 +41,16 @@ import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
+
+
 import javax.swing.JScrollPane;
 
-import java.awt.ScrollPane;
+
 
 /**
  * @author dukocuk
@@ -256,8 +256,10 @@ public class M3U2XML {
 							
 							
 
-							for (int i = 0; i < addressArray.length; i++) {
-
+							for (int i = 0; i < channelArray.length; i++) {
+								
+								channelArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
+								channelArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
 								pingUrl(channelArray[i], addressArray[i]);
 
 							}
@@ -476,8 +478,8 @@ public class M3U2XML {
 		frame.getContentPane().add(rdbtnAllChannels);
 		frame.getContentPane().add(rdbtnTurkishChannels);
 
-		rdbtnAllChannels.setBounds(0, 312, 125, 31);
-		rdbtnTurkishChannels.setBounds(0, 340, 209, 31);
+		rdbtnAllChannels.setBounds(0, 312, 159, 31);
+		rdbtnTurkishChannels.setBounds(0, 340, 252, 31);
 		
 		JLabel lblImport = new JLabel("Import");
 		lblImport.setFont(new Font("Tahoma", Font.PLAIN, 20));
