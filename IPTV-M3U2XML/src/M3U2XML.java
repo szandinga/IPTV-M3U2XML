@@ -49,6 +49,7 @@ import javax.swing.JLabel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 /**
  * @author dukocuk
@@ -271,15 +272,15 @@ public class M3U2XML {
 								channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
 								channelArray[i] = channelArray[i].replace("#EXTINF:0,", "");
 
-								// MyTextArea thread = new
-								// MyTextArea(channelArray[i], addressArray[i],
-								// i);
-								// thread.start();
+//								 MyTextArea thread = new
+//								 MyTextArea(channelArray[i], addressArray[i],
+//								 i);
+//								 thread.start();
 
 								myThreads[i] = new MyTextArea(channelArray[i], addressArray[i], i);
 								myThreads[i].start();
 
-								// myThreads[i].join();
+							
 
 							}
 
@@ -298,12 +299,12 @@ public class M3U2XML {
 							channelSortedArray = channelSortedArrayList.toArray(channelSortedArray);
 							addressSortedArray = addressSortedArrayList.toArray(addressSortedArray);
 
-							for (int i = 0; i < channelSortedArray.length; i++) {
-
-								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
-								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
-
-							}
+//							for (int i = 0; i < channelSortedArray.length; i++) {
+//
+//								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
+//								channelSortedArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
+//
+//							}
 
 							for (int i = 0; i < addressSortedArray.length; i++) {
 
@@ -540,58 +541,57 @@ public class M3U2XML {
 		frame.getContentPane().add(progressBar);
 
 		lblDone = new JLabel("");
-		lblDone.setBounds(263, 321, 215, 42);
+		lblDone.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDone.setFont(new Font("Calibri", Font.BOLD, 30));
+		lblDone.setBounds(254, 312, 225, 85);
 		frame.getContentPane().add(lblDone);
 
 	}
 
 	public void pingUrl(final String channel, final String address, int value) {
-		try {
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(channelArray.length);
+//			final URL url = new URL(address);
+//			final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+//			urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
+//			final long startTime = System.currentTimeMillis();
+//			urlConn.connect();
+//			final long endTime = System.currentTimeMillis();
+		channelSortedArrayList.add(channel);
+		addressSortedArrayList.add(address);
+//			if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//				System.out.println("Time (ms) : " + (endTime - startTime));
+//				System.out.println("Ping to " + address + " was success");
+//				textArea.append(channel + "\n");
+//				textArea.append(address + "\n");
+			// textArea.append(address);
+		
+//				ping_success++;
+//				// progressBar.setValue(ping_all);
+//				// progressBar.repaint();
+//				// progressBar.setString(Integer.toString(value) + "%");
+//				// return true;
+//			} else {
+//				System.out.println("Time (ms) : " + (endTime - startTime));
+//				System.out.println("Ping to " + address + " not success");
+//				ping_fail++;
+//				// progressBar.setValue(ping_all);
+//				// progressBar.repaint();
+//				// progressBar.setString(Integer.toString(value) + "%");
+//				// return false;
+//			}
 
-			progressBar.setMinimum(0);
-			progressBar.setMaximum(channelArray.length);
-			final URL url = new URL(address);
-			final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-			urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
-			final long startTime = System.currentTimeMillis();
-			urlConn.connect();
-			final long endTime = System.currentTimeMillis();
-			if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				System.out.println("Time (ms) : " + (endTime - startTime));
-				System.out.println("Ping to " + address + " was success");
-				textArea.append(channel + "\n");
-				textArea.append(address + "\n");
-				// textArea.append(address);
-				channelSortedArrayList.add(channel);
-				addressSortedArrayList.add(address);
-				ping_success++;
-				// progressBar.setValue(ping_all);
-				// progressBar.repaint();
-				// progressBar.setString(Integer.toString(value) + "%");
-				// return true;
-			} else {
-				System.out.println("Time (ms) : " + (endTime - startTime));
-				System.out.println("Ping to " + address + " not success");
-				ping_fail++;
-				// progressBar.setValue(ping_all);
-				// progressBar.repaint();
-				// progressBar.setString(Integer.toString(value) + "%");
-				// return false;
-			}
-
-			progressBar.setMinimum(0);
-			progressBar.setMaximum(counter_channel);
-			progressBar.setValue(value);
-			progressBar.setString(Integer.toString(value) + "%");
-			progressBar.repaint();
-
-		} catch (final MalformedURLException e1) {
-			// e1.printStackTrace();
-			System.out.println("MalformedURLException");
-		} catch (final IOException e) {
-			// e.printStackTrace();
-			System.out.println("IOException");
-		}
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(counter_channel);
+		progressBar.setValue(value);
+		progressBar.setString(Integer.toString(value) + "%");
+		progressBar.repaint();
+		
+		System.out.println("channels unsorted " + channelArrayList.size());
+		System.out.println("counter_channel " + counter_channel);
+		System.out.println("ping_success total size " + ping_success);
+		System.out.println("ping_fail total size " + ping_fail);
+		System.out.println("channels sorted " + channelSortedArrayList.size());
 
 	}
 	
@@ -647,11 +647,7 @@ public class M3U2XML {
 			// progressBar.setString(NumberFormat.getPercentInstance().format(value)
 			// + "%");
 
-			System.out.println("channels unsorted " + channelArrayList.size());
-			System.out.println("counter_channel " + counter_channel);
-			System.out.println("ping_success total size " + ping_success);
-			System.out.println("ping_fail total size " + ping_fail);
-			System.out.println("channels sorted " + channelSortedArrayList.size());
+	
 
 		}
 	}
