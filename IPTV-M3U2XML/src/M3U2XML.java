@@ -1,4 +1,3 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -23,12 +22,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.NumberFormat;
 
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 
 import java.io.FileReader;
@@ -47,10 +47,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
 
-
 import javax.swing.JScrollPane;
-
-
+import javax.swing.JProgressBar;
 
 /**
  * @author dukocuk
@@ -70,7 +68,7 @@ public class M3U2XML {
 	int counter_address = 0;
 
 	// To keep track og how many success and fails on pinging the urls.
-	int ping_success = 0, ping_fail = 0;
+	int ping_success = 0, ping_fail = 0, ping_all = ping_success + ping_fail;
 
 	/*
 	 * Two ArrayList for when lines in the file are read. ArrayList channel
@@ -125,6 +123,10 @@ public class M3U2XML {
 	JTextArea textArea;
 	JRadioButton rdbtnAllChannels, rdbtnTurkishChannels;
 
+	JProgressBar progressBar;
+
+	JLabel lblDone;
+
 	/**
 	 * Launch the application.
 	 */
@@ -161,19 +163,17 @@ public class M3U2XML {
 		frame.getContentPane().setLayout(null);
 		// sets the icon on the fram. Works for windows but not mac.
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
-		
+
 		// Creates a text area on the window.
 		textArea = new JTextArea();
+		textArea.setEditable(false);
 		textArea.setBounds(6, 33, 471, 248);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		textArea.setVisible(true);
 		Font font = textArea.getFont();
 		float size = font.getSize() + 5.0f;
 		textArea.setFont(font.deriveFont(size));
-		
-		
+
 		frame.getContentPane().add(textArea);
 		JScrollPane scroll = new JScrollPane(textArea);
 		scroll.setBounds(6, 4, 480, 250);
@@ -188,6 +188,7 @@ public class M3U2XML {
 
 		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				textArea.setText("Please wait while list is finished! \nThis may take some time");
 
 				// creates a chooser so you can chose the file yourself.
 				JFileChooser chooser = new JFileChooser();
@@ -207,15 +208,13 @@ public class M3U2XML {
 				checker = chooser.showOpenDialog(null);
 
 				if (checker == JFileChooser.APPROVE_OPTION) {
+					
+					
 					namePath = chooser.getSelectedFile();
-					
-					
 
 					// Reads the file
 					try {
 
-						
-						
 						FileReader fr = new FileReader(namePath);
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(new FileInputStream(namePath), "UTF-8"));
@@ -238,31 +237,63 @@ public class M3U2XML {
 							}
 							counter++;
 						}
-
 						br.close();
 						fr.close();
+						
+					} catch (IOException e) {
+						System.out.println("File not found!");
+						e.printStackTrace();
+					}
+
+						
 
 						channelArray = channelArrayList.toArray(channelArray);
 						addressArray = addressArrayList.toArray(addressArray);
+
+						progressBar.setMinimum(0);
+						progressBar.setMaximum(channelArray.length);
+						progressBar.setValue(0);
+						progressBar.repaint();
 						
 						
+					
 						
-						
-						
+						Thread myThreads[] = new Thread[channelArray.length];
 
 						// All list
 
 						if (rdbtnAllChannels.isSelected()) {
-							
-							
+						
+						textArea.setText("");
 
 							for (int i = 0; i < channelArray.length; i++) {
-								
-								channelArray[i] = channelSortedArray[i].replace("#EXTINF:-1,", "");
-								channelArray[i] = channelSortedArray[i].replace("#EXTINF:0,", "");
-								pingUrl(channelArray[i], addressArray[i]);
+
+								channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
+								channelArray[i] = channelArray[i].replace("#EXTINF:0,", "");
+
+								// MyTextArea thread = new
+								// MyTextArea(channelArray[i], addressArray[i],
+								// i);
+								// thread.start();
+
+								myThreads[i] = new MyTextArea(channelArray[i], addressArray[i], i);
+								myThreads[i].start();
+
+								// myThreads[i].join();
 
 							}
+
+							for (int i = 0; i < channelArray.length; i++) {
+								try {
+									myThreads[i].join();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							
+
+							 lblDone.setText("Finished!");
 
 							channelSortedArray = channelSortedArrayList.toArray(channelSortedArray);
 							addressSortedArray = addressSortedArrayList.toArray(addressSortedArray);
@@ -297,19 +328,21 @@ public class M3U2XML {
 								}
 
 							}
-							
+
 							channelTurkishArray = channelTurkishArrayList.toArray(channelTurkishArray);
 							addressTurkishArray = addressTurkishArrayList.toArray(addressTurkishArray);
 
 							for (int i = 0; i < channelTurkishArray.length; i++) {
 
-								pingUrl(channelTurkishArray[i], addressTurkishArray[i]);
+								MyTextArea temp = new MyTextArea(channelTurkishArray[i], addressTurkishArray[i], i);
+								temp.start();
+								// pingUrl(channelTurkishArray[i],
+								// addressTurkishArray[i]);
 
 							}
 
 							channelSortedArray = channelSortedArrayList.toArray(channelSortedArray);
 							addressSortedArray = addressSortedArrayList.toArray(addressSortedArray);
-							
 
 							for (int i = 0; i < channelSortedArray.length; i++) {
 
@@ -329,38 +362,52 @@ public class M3U2XML {
 							}
 
 						}
-						
+
 						/*
 						 * This part helps me to figure how it all went out.
 						 */
 
-						System.out.println(Arrays.toString(channelArray));
-						System.out.println(Arrays.toString(addressArray));
-						System.out.println(Arrays.toString(channelSortedArray));
-						System.out.println(Arrays.toString(addressSortedArray));
+						// System.out.println(Arrays.toString(channelArray));
+						// System.out.println(Arrays.toString(addressArray));
+						// System.out.println(Arrays.toString(channelSortedArray));
+						// System.out.println(Arrays.toString(addressSortedArray));
+						//
+						// System.out.println(counter + " total lines");
+						// System.out.println(counter_channel + " total even
+						// lines");
+						// System.out.println(counter_address + " total odd
+						// lines");
+						//
+						// System.out.println("channelArray total size " +
+						// channelArray.length);
+						// System.out.println("addressArray total size " +
+						// addressArray.length);
+						// System.out.println("channelTurkishArray array total
+						// size " + channelTurkishArray.length);
+						// System.out.println("addressTurkishArray array total
+						// size " + addressTurkishArray.length);
+						// System.out.println("ping_success total size " +
+						// ping_success);
+						// System.out.println("ping_fail total size " +
+						// ping_fail);
+						// System.out.println("channelArraySorted array total
+						// size " + channelSortedArray.length);
+						// System.out.println("addressArraySorted array total
+						// size " + addressSortedArray.length);
 
-						System.out.println(counter + " total lines");
-						System.out.println(counter_channel + " total even lines");
-						System.out.println(counter_address + " total odd lines");
-
-						System.out.println("channelArray total size " + channelArray.length);
-						System.out.println("addressArray total size " + addressArray.length);
-						System.out.println("channelTurkishArray array total size " + channelTurkishArray.length);
-						System.out.println("addressTurkishArray array total size " + addressTurkishArray.length);
-						System.out.println("ping_success total size " + ping_success);
-						System.out.println("ping_fail total size " + ping_fail);
-						System.out.println("channelArraySorted array total size " + channelSortedArray.length);
-						System.out.println("addressArraySorted array total size " + addressSortedArray.length);
-
-						
-
-						textArea.append("You have imported and truncated non-working channels in file \n" + namePath
-								+ "\n" + "Please click \"Create XML File\"");
-
-					} catch (IOException e) {
-						System.out.println("File not found!");
-						e.printStackTrace();
-					}
+						/*
+						 * textArea.
+						 * append("You have imported and truncated non-working channels in file \n"
+						 * + namePath + "\n" +
+						 * "Please click \"Create XML File\"");
+						 */
+//					} catch (IOException e) {
+//						System.out.println("File not found!");
+//						e.printStackTrace();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 
 				}
 
@@ -400,7 +447,7 @@ public class M3U2XML {
 				// </item>
 				// </streamingInfos>
 
-				int size = channelSortedArray.length;
+				int size = channelSortedArrayList.size();
 
 				Element rootElement = xmlDoc.createElement("streamingInfos");
 
@@ -480,20 +527,29 @@ public class M3U2XML {
 
 		rdbtnAllChannels.setBounds(0, 312, 159, 31);
 		rdbtnTurkishChannels.setBounds(0, 340, 252, 31);
-		
+
 		JLabel lblImport = new JLabel("Import");
 		lblImport.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblImport.setBounds(10, 280, 60, 25);
 		frame.getContentPane().add(lblImport);
-		
-		
-		
-		
+
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setStringPainted(true);
+		progressBar.setBounds(269, 280, 209, 25);
+
+		frame.getContentPane().add(progressBar);
+
+		lblDone = new JLabel("");
+		lblDone.setBounds(263, 321, 215, 42);
+		frame.getContentPane().add(lblDone);
 
 	}
 
-	public void pingUrl(final String channel, final String address) {
+	public void pingUrl(final String channel, final String address, int value) {
 		try {
+
+			progressBar.setMinimum(0);
+			progressBar.setMaximum(channelArray.length);
 			final URL url = new URL(address);
 			final HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 			urlConn.setConnectTimeout(1000 * 10); // mTimeout is in seconds
@@ -503,18 +559,31 @@ public class M3U2XML {
 			if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				System.out.println("Time (ms) : " + (endTime - startTime));
 				System.out.println("Ping to " + address + " was success");
-				textArea.append(channel);
-				textArea.append(address);
+				textArea.append(channel + "\n");
+				textArea.append(address + "\n");
+				// textArea.append(address);
 				channelSortedArrayList.add(channel);
 				addressSortedArrayList.add(address);
 				ping_success++;
+				// progressBar.setValue(ping_all);
+				// progressBar.repaint();
+				// progressBar.setString(Integer.toString(value) + "%");
 				// return true;
 			} else {
 				System.out.println("Time (ms) : " + (endTime - startTime));
 				System.out.println("Ping to " + address + " not success");
 				ping_fail++;
+				// progressBar.setValue(ping_all);
+				// progressBar.repaint();
+				// progressBar.setString(Integer.toString(value) + "%");
 				// return false;
 			}
+
+			progressBar.setMinimum(0);
+			progressBar.setMaximum(counter_channel);
+			progressBar.setValue(value);
+			progressBar.setString(Integer.toString(value) + "%");
+			progressBar.repaint();
 
 		} catch (final MalformedURLException e1) {
 			// e1.printStackTrace();
@@ -522,6 +591,68 @@ public class M3U2XML {
 		} catch (final IOException e) {
 			// e.printStackTrace();
 			System.out.println("IOException");
+		}
+
+	}
+	
+	class MyTextArea2 extends Thread {
+		
+		String text;
+		
+		public MyTextArea2(String text) {
+			this.text = text;
+		}
+		
+		public void run() {
+			setLabel(text);
+		}
+		
+	}
+	
+	public void setLabel(String text) {
+		lblDone.setText(text);
+	}
+
+	class MyTextArea extends Thread {
+		String channel;
+		String address;
+		int value;
+
+		public MyTextArea(String channel, String address, int value) {
+			this.channel = channel;
+			this.address = address;
+			this.value = value + 1;
+		}
+
+		public void run() {
+
+			pingUrl(channel, address, this.value);
+
+			// System.out.println(Arrays.toString(channelArray));
+			// System.out.println(Arrays.toString(addressArray));
+			// System.out.println(Arrays.toString(channelSortedArray));
+			// System.out.println(Arrays.toString(addressSortedArray));
+			//
+			// System.out.println(counter + " total lines");
+			// System.out.println(counter_channel + " total even lines");
+			// System.out.println(counter_address + " total odd lines");
+			//
+			// System.out.println("channelArray total size " +
+			// channelArray.length);
+			// System.out.println("addressArray total size " +
+			// addressArray.length);
+			// System.out.println("ping_success total size " + ping_success);
+			// System.out.println("ping_fail total size " + ping_fail);
+
+			// progressBar.setString(NumberFormat.getPercentInstance().format(value)
+			// + "%");
+
+			System.out.println("channels unsorted " + channelArrayList.size());
+			System.out.println("counter_channel " + counter_channel);
+			System.out.println("ping_success total size " + ping_success);
+			System.out.println("ping_fail total size " + ping_fail);
+			System.out.println("channels sorted " + channelSortedArrayList.size());
+
 		}
 	}
 }
