@@ -282,8 +282,10 @@ public class M3U2XML {
 						e.printStackTrace();
 					}
 
+					channelArrayList.replaceAll(String::toUpperCase);
 					channelArray = channelArrayList.toArray(channelArray);
 					addressArray = addressArrayList.toArray(addressArray);
+					
 
 					// All list
 
