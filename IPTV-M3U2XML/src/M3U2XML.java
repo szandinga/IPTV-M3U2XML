@@ -45,7 +45,6 @@ import javax.swing.JLabel;
 
 import javax.swing.JScrollPane;
 
-
 /**
  * @author dukocuk
  *
@@ -63,8 +62,6 @@ public class M3U2XML {
 	int counter_channel = 0;
 	int counter_address = 0;
 
-	// To keep track og how many success and fails on pinging the urls.
-	// int ping_success = 0, ping_fail = 0, ping_all = ping_success + ping_fail;
 
 	/*
 	 * Two ArrayList for when lines in the file are read. ArrayList channel
@@ -118,7 +115,6 @@ public class M3U2XML {
 
 	JTextArea textArea;
 	JRadioButton rdbtnAllChannels, rdbtnTurkishChannels;
-
 
 	JLabel lblDone;
 
@@ -206,9 +202,8 @@ public class M3U2XML {
 		lblImport.setBounds(10, 280, 60, 25);
 		frame.getContentPane().add(lblImport);
 
-
 		btnCreate.setEnabled(false);
-		rdbtnTurkishChannels.setEnabled(false);
+//		rdbtnTurkishChannels.setEnabled(false);
 
 		/**
 		 * Opens and import the file when button clicked.
@@ -285,18 +280,21 @@ public class M3U2XML {
 					channelArrayList.replaceAll(String::toUpperCase);
 					channelArray = channelArrayList.toArray(channelArray);
 					addressArray = addressArrayList.toArray(addressArray);
-					
+
+					for (int i = 0; i < channelArray.length; i++) {
+
+						
+						String toSplit = channelArray[i];
+						String[] splitted = toSplit.split(",", 2);
+						channelArray[i] = splitted[1];
+						
+						
+
+					}
 
 					// All list
 
 					if (rdbtnAllChannels.isSelected()) {
-
-						for (int i = 0; i < channelArray.length; i++) {
-
-							channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
-							channelArray[i] = channelArray[i].replace("#EXTINF:0,", "");
-
-						}
 
 						for (int i = 0; i < addressArray.length; i++) {
 
@@ -313,9 +311,21 @@ public class M3U2XML {
 
 						for (int i = 0; i < channelArray.length; i++) {
 
-							if (channelArray[i].toLowerCase().contains("tr")) {
 
-								channelTurkishArrayList.add(channelArray[i]);
+							if (channelArray[i].matches("TK(.*)") || 
+									channelArray[i].matches("TR(.*)") ||
+										channelArray[i].matches("TUR(.*)") ||
+										channelArray[i].matches("TURKISH(.*)")
+									
+									) {
+								
+							
+								
+
+								String toSplit = channelArray[i];
+								String[] splitted = toSplit.split("[-:|]");
+								
+								channelTurkishArrayList.add(splitted[1]);
 								addressTurkishArrayList.add(addressArray[i]);
 
 							}
@@ -325,24 +335,11 @@ public class M3U2XML {
 						channelTurkishArray = channelTurkishArrayList.toArray(channelTurkishArray);
 						addressTurkishArray = addressTurkishArrayList.toArray(addressTurkishArray);
 
-						for (int i = 0; i < channelTurkishArray.length; i++) {
 
-						}
+						for (int i = 0; i < addressTurkishArray.length; i++) {
 
-						for (int i = 0; i < channelArray.length; i++) {
-
-							channelArray[i] = channelArray[i].replace("#EXTINF:-1,", "");
-							channelArray[i] = channelArray[i].replace("#EXTINF:0,", "");
-							channelArray[i] = channelArray[i].replace("(TR) ,", "");
-							channelArray[i] = channelArray[i].replace("[ TR ] ", "");
-							channelArray[i] = channelArray[i].replace("TR: ", "");
-
-						}
-
-						for (int i = 0; i < addressArray.length; i++) {
-
-							addressArray[i] = "plugin://plugin.video.f4mTester/?url=" + addressArray[i]
-									+ "&streamtype=TSDOWNLOADER&name=" + channelArray[i];
+							addressTurkishArray[i] = "plugin://plugin.video.f4mTester/?url=" + addressTurkishArray[i]
+									+ "&streamtype=TSDOWNLOADER&name=" + channelTurkishArray[i];
 
 						}
 
@@ -405,9 +402,13 @@ public class M3U2XML {
 				// </item>
 				// </streamingInfos>
 
-				int size = channelArray.length;
+				
 
 				Element rootElement = xmlDoc.createElement("streamingInfos");
+				
+				if (rdbtnAllChannels.isSelected()) {
+					
+					int size = channelArray.length;
 
 				for (int i = 0; i < size; i++) {
 
@@ -426,6 +427,33 @@ public class M3U2XML {
 					mainElement.appendChild(link);
 
 					rootElement.appendChild(mainElement);
+				}
+				
+				}
+				
+				else if (rdbtnTurkishChannels.isSelected()) {
+					
+					int size = channelTurkishArray.length;
+					
+					for (int i = 0; i < size; i++) {
+
+						Element mainElement = xmlDoc.createElement("item");
+						// mainElement.setAttribute("sku", "123456");
+
+						Element title = xmlDoc.createElement("title");
+						Text titleText = xmlDoc.createTextNode(channelTurkishArray[i]);
+						title.appendChild(titleText);
+
+						Element link = xmlDoc.createElement("link");
+						Text linkText = xmlDoc.createTextNode(addressTurkishArray[i]);
+						link.appendChild(linkText);
+
+						mainElement.appendChild(title);
+						mainElement.appendChild(link);
+
+						rootElement.appendChild(mainElement);
+					}
+					
 				}
 
 				xmlDoc.appendChild(rootElement);
