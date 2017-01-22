@@ -419,6 +419,7 @@ public class M3U2XML {
 				else if (rdbtnTurkishChannels.isSelected()) {
 
 					createXML = new CreateXML(channelTurkishArray, addressTurkishArray, namePath.getName());
+					createXML.createXML();
 					textArea.setText("You created the file " + createXML.getFileName() + "!");
 					clearArrays(channelTurkishArrayList, addressTurkishArrayList, channelTurkishArray,
 							addressTurkishArray);
@@ -427,6 +428,7 @@ public class M3U2XML {
 				else if (rdbtnArabChannels.isSelected()) {
 
 					createXML = new CreateXML(channelArabArray, addressArabArray, namePath.getName());
+					createXML.createXML();
 					textArea.setText("You created the file " + createXML.getFileName() + "!");
 					clearArrays(channelArabArrayList, addressArabArrayList, channelArabArray, addressArabArray);
 				}
