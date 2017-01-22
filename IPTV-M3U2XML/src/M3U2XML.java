@@ -224,24 +224,18 @@ public class M3U2XML {
 					}
 					
 					else if (rdbtnTurkishChannels.isSelected()) {
-						
-						instantiateArrays(channelTurkishArrayList, addressTurkishArrayList, channelArray, addressArray);
+						instantiateArrays();
+						instantiateArrays(channelTurkishArrayList, addressTurkishArrayList, channelTurkishArray, addressTurkishArray);
 					}
 					
 					else if (rdbtnArabChannels.isSelected()) {
-						
+						instantiateArrays();
 						instantiateArrays(channelArabArrayList, addressArabArrayList, channelArabArray, addressArabArray);
 					}
 					
 					
-					channelArrayList = new ArrayList<String>();
-					addressArrayList = new ArrayList<String>();
-					channelArray = new String[channelArrayList.size()];
-					addressArray = new String[addressArrayList.size()];
-					channelTurkishArrayList = new ArrayList<String>();
-					addressTurkishArrayList = new ArrayList<String>();
-					channelTurkishArray = new String[channelTurkishArrayList.size()];
-					addressTurkishArray = new String[addressTurkishArrayList.size()];
+
+
 					
 
 					btnCreate.setEnabled(true);
@@ -318,7 +312,7 @@ public class M3U2XML {
 									) {
 
 								String toSplit = channelArray[i];
-								String[] splitted = toSplit.split("[-:|]");
+								String[] splitted = toSplit.split("[-|:|\\|\\W]" ,2);
 
 								channelTurkishArrayList.add(splitted[1]);
 								addressTurkishArrayList.add(addressArray[i]);
@@ -348,7 +342,7 @@ public class M3U2XML {
 							if (channelArray[i].matches("AR(.*)")) {
 
 								String toSplit = channelArray[i];
-								String[] splitted = toSplit.split("[-:|]");
+								String[] splitted = toSplit.split("[-|:|\\|\\W]" ,2);
 
 								channelArabArrayList.add(splitted[1]);
 								addressArabArrayList.add(addressArray[i]);
