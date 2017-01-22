@@ -312,7 +312,7 @@ public class M3U2XML {
 									) {
 
 								String toSplit = channelArray[i];
-								String[] splitted = toSplit.split("[-|:|\\|\\W]" ,2);
+								String[] splitted = toSplit.split("[-|:|\\||\\W]" ,2);
 
 								channelTurkishArrayList.add(splitted[1]);
 								addressTurkishArrayList.add(addressArray[i]);
@@ -342,7 +342,7 @@ public class M3U2XML {
 							if (channelArray[i].matches("AR(.*)")) {
 
 								String toSplit = channelArray[i];
-								String[] splitted = toSplit.split("[-|:|\\|\\W]" ,2);
+								String[] splitted = toSplit.split("[-|:|\\||\\W]" ,2);
 
 								channelArabArrayList.add(splitted[1]);
 								addressArabArrayList.add(addressArray[i]);

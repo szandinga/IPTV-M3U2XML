@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -18,7 +19,11 @@ public class CreateXML {
 
 	String[] channel;
 	String[] address;
-	String newFile;
+	
+	
+	String namePath;
+	String fileNameWithOutExt;
+	String newFile; 
 	File xmlFile;
 	
 
@@ -34,7 +39,9 @@ public class CreateXML {
 
 		this.channel = channel;
 		this.address = address;
-		this.newFile = namePath + ".xml";
+		this.namePath = namePath;
+		this.fileNameWithOutExt = FilenameUtils.removeExtension(namePath);
+		this.newFile = fileNameWithOutExt + ".xml";
 		this.xmlFile = new File(newFile);
 		
 
